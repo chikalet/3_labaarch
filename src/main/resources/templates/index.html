@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>File Manager</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/css/materialize.min.css}" />
+        <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}" />
+        <script th:src="@{/js/jquery.min.js}"></script>
+        <script th:src="@{/js/materialize.min.js}"></script>
+        <script th:src="@{/js/index.js}"></script>
+    </head>
+    <body>
+    <h2>Current Directory: <span th:text="${currentPath}"></span></h2>
+        <ul class="collection">
+            <li class="collection-item" th:if='${currentPath != "/"}'><a style="cursor: pointer" onclick="window.history.back()"><- Back</a></li>
+            <li class="collection-item" th:each="file : ${files}">
+                <div>
+                    <a th:if="${file.isDirectory()}" th:href="'?path=' + ${file.getAbsolutePath()}">
+                        <span th:text="${file.getName() + '/'}"></span>
+                    </a>
+                    <a style="color: black" th:href="'/view?path=' + ${file.getAbsolutePath()}" th:unless="${file.isDirectory()}" th:text="${file.getName()}"></a>
+                    <ul class="collection" th:if="${file.isDirectory() && file.listFiles().length > 0}">
+                        <li class="collection-item" th:each="subfile : ${file.listFiles()}">
+                            <a th:if="${subfile.isDirectory()}" th:href="'?path=' + ${subfile.getAbsolutePath()}">
+                                <span th:text="${subfile.getName() + '/'}"></span>
+                            </a>
+                            <a style="color: black" th:href="'/view?path=' + ${subfile.getAbsolutePath()}" th:unless="${subfile.isDirectory()}" th:text="${subfile.getName()}"></a>
+                            <ul class="collection" th:if="${subfile.isDirectory() && subfile.listFiles().length > 0}">
+                                <li class="collection-item" th:each="subsubfile : ${subfile.listFiles()}">
+                                    <a th:if="${subsubfile.isDirectory()}" th:href="'?path=' + ${subsubfile.getAbsolutePath()}">
+                                        <span th:text="${subsubfile.getName() + '/'}"></span>
+                                    </a>
+                                    <a style="color: black" th:href="'/view?path=' + ${subsubfile.getAbsolutePath()}" th:unless="${subsubfile.isDirectory()}" th:text="${subsubfile.getName()}"></a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </body>
+</html>
